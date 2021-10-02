@@ -1,0 +1,48 @@
+From 644bb8b1c6f716aba580f26e0b91c62502f5aab7 Mon Sep 17 00:00:00 2001
+From: fcying <fcyingmk2@gmail.com>
+Date: Sat, 2 Oct 2021 09:12:13 +0800
+Subject: [PATCH] log add timestamp
+
+---
+ plugin/pkg/log/log.go | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/plugin/pkg/log/log.go b/plugin/pkg/log/log.go
+index 6f9dd07c..c0585de2 100644
+--- a/plugin/pkg/log/log.go
++++ b/plugin/pkg/log/log.go
+@@ -14,6 +14,7 @@ import (
+ 	golog "log"
+ 	"os"
+ 	"sync"
++	"time"
+ )
+ 
+ // D controls whether we should output debug logs. If true, we do, once set
+@@ -25,6 +26,8 @@ type d struct {
+ 	sync.RWMutex
+ }
+ 
++func clock() string { return time.Now().Format("2006/01/02 15:04:05 ") }
++
+ // Set enables debug logging.
+ func (d *d) Set() {
+ 	d.Lock()
+@@ -49,12 +52,12 @@ func (d *d) Value() bool {
+ 
+ // logf calls log.Printf prefixed with level.
+ func logf(level, format string, v ...interface{}) {
+-	golog.Print(level, fmt.Sprintf(format, v...))
++	golog.Print(clock(), level, fmt.Sprintf(format, v...))
+ }
+ 
+ // log calls log.Print prefixed with level.
+ func log(level string, v ...interface{}) {
+-	golog.Print(level, fmt.Sprint(v...))
++	golog.Print(clock(), level, fmt.Sprint(v...))
+ }
+ 
+ // Debug is equivalent to log.Print(), but prefixed with "[DEBUG] ". It only outputs something
+-- 
+2.30.2
+

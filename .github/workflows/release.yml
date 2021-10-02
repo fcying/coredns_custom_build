@@ -1,0 +1,48 @@
+name: release
+
+on:
+  schedule:
+  - cron: '0 3 * * *'
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-18.04
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    steps:
+      - name: Check Coredns version
+        run: |
+          new_ver=$(curl https://github.com/coredns/coredns/releases/latest | grep -Po "v(\d+\.){2}\d+")
+          echo ::set-env name=RELEASE_TAG::"$new_ver"
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17.1'
+      - uses: actions/checkout@v2
+      - name: Build latest coredns
+        run: |
+          go version
+          ./build.sh release ${{ env.RELEASE_TAG }}
+      - uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          delete_release: true
+          tag_name: ${{ env.RELEASE_TAG }}
+      - uses: meeDamian/github-release@v2.0.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_TAG }}
+          allow_override: true
+          gzip: false
+          draft: false
+          files: |
+            coredns_linux_amd64.zip:./coredns_linux_amd64.zip
+          body: |
+            add plugin [dnsredir](https://github.com/leiless/dnsredir).
+            log add timestamp.
+
+
