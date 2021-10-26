@@ -44,5 +44,3 @@ jobs:
           removeArtifacts: true
           artifacts: "./coredns_linux_amd64.zip"
           body: |
-            add plugin [dnsredir](https://github.com/leiless/dnsredir).
-            log add timestamp.

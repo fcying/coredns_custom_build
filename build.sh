@@ -17,6 +17,9 @@ else
 fi
 
 echo "dnsredir:github.com/leiless/dnsredir" >> plugin.cfg
+echo "conditional:github.com/chrisohaver/conditional" >> plugin.cfg
+echo "fwdpolicy:github.com/infobloxopen/fwdpolicy" >> plugin.cfg
+
 git apply ../log-add-timestamp.patch
 
 make
