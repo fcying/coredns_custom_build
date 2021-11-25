@@ -27,20 +27,9 @@ jobs:
           go version
           ./build.sh release ${{ env.RELEASE_TAG }}
 
-      - uses: dev-drprasad/delete-tag-and-release@v0.2.0
+      - name: Publish release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          delete_release: true
-          tag_name: ${{ env.RELEASE_TAG }}
-
-      - uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.RELEASE_TAG }}
-          artifactErrorsFailBuild: true
-          allowUpdates: true
-          replacesArtifacts: true
-          removeArtifacts: true
-          artifacts: "./coredns_linux_amd64.zip"
-          body: |
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete ${{ env.RELEASE_TAG }} -y || true
+          gh release create ${{ env.RELEASE_TAG }} -t "${{ env.RELEASE_TAG }}" --target $GITHUB_SHA *.zip
