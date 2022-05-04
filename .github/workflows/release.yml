@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Check Coredns version
         run: |
-          new_ver=$(curl https://github.com/coredns/coredns/releases/latest | grep -Po "v(\d+\.){2}\d+")
+          new_ver=$(curl -sv "https://github.com/coredns/coredns/releases/latest" 2>&1 | grep location: | grep -Po "v(\d+\.){2}\d+")
           echo ::set-env name=RELEASE_TAG::"$new_ver"
 
       - uses: actions/setup-go@v2
